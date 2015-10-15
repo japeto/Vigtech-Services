@@ -6,9 +6,11 @@ urlpatterns = patterns('',
                        url(r'^$', login_required(home.as_view()), name='index'),
                        url(r'^home/$', login_required(home.as_view()), name='home'),
                        url(r'^gestionusuarios/registrar/$', RegistrarUsuario.as_view(), name='registrar_usuario'),
+                       
+                       url(r'logmensajes/$', 'principal.views.logmensajes',name='logmensajes'),
+                       
                        url(r'^gestionproyectos/nuevoProyecto/$', 'principal.views.nuevo_proyecto',
                            name='crear_proyecto'),
-
                        url(r'^gestionproyectos/MisProyectos/$', 'principal.views.ver_mis_proyectos',
                            name='ver_mis_proyectos'),
                        url(r'^gestionproyectos/editar_proyecto/(\d+)$', 'principal.views.editar_proyecto',

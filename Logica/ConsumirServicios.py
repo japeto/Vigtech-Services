@@ -1,5 +1,4 @@
 # coding=utf-8
-__author__ = 'andres'
 import json
 from urllib2 import urlopen, quote, Request
 import urllib
@@ -7,16 +6,51 @@ import procesamientoScopusXml
 from ConexionBD.adminBD import AdminBD
 import traceback
 
-REPOSITORY_DIR = "/home/vigtech/shared/repository/"
+"""
+"""
+__author__ = "andres"
+__date__ = "7 October 2015"
+__version__ = "$Revision: 3 $"
+__credits__ =  """ 
+				JAPeTo <jeffersonamado@gmail.com>
+			   """
+# Known bugs that can't be fixed here:
+	#~  REPOSITORY_DIR  -> line 45
+	#~  server -> consumir_scholar
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+
+REPOSITORY_DIR = "/home/japeto/shared/repository/"
+
 def consumir_scholar(consulta, user, proyecto):
     consulta = quote(consulta.encode("utf8"))
     user = quote(user.encode("utf8"))
     proyecto = quote(proyecto.encode("utf8"))
-
+    
     server = "http://localhost:50000/consultaScholar/?consulta=" + consulta + "&user=" \
              + str(user) + "&proyecto=" + str(proyecto)
-
-
 
     # req = Request(server)
     response = urlopen(server)

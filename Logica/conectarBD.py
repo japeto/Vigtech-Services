@@ -4,7 +4,7 @@ import psycopg2
 
 def run_query(query=''):
     #conn_string = "host='localhost' dbname='postgres' user='postgres' password='chucho'"
-    conn_string = "host='127.0.0.1' dbname='docker' user='docker' password='docker' port='49153'"
+    conn_string = "host='127.0.0.1' dbname='docker' user='postgres' password='' port='5432'"
     conn = psycopg2.connect(conn_string) # Conectar a la base de datos
     #$conn.set_character_encoding('utf8')
     cursor = conn.cursor()         # Crear un cursor

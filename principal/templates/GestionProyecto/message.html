@@ -1,0 +1,14 @@
+{% block enviar_mensaje %}
+<div class="col-md-4" id='load' style="display:none;">	
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+		Proceso
+		</div>							
+		<div class="panel-body">
+			{% for message in messages %}
+				{% render_message message %}
+			{% endfor %}
+		</div>
+	</div>
+</div>	
+{% endblock %}

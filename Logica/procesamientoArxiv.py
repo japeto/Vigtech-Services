@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
 #from conectarBD import insertar_paper
 from ConexionBD import adminBD
-from adminBD import AdminBD
+#~ from adminBD import AdminBD   # Esta la comente JAPeTo
 #paper, autores, revista,afiliaciones, keywords, id_proyecto
 REPOSITORY_DIR= "/home/vigtech/shared/repository/"
 

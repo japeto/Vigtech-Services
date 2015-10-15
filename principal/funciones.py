@@ -3,7 +3,44 @@ import os
 import json
 import urllib
 
-REPOSITORY_DIR = '/home/vigtech/shared/repository/'
+
+"""
+"""
+__author__ = "andres"
+__date__ = "7 October 2015"
+__version__ = "$Revision: 3 $"
+__credits__ =  """ 
+				JAPeTo <jeffersonamado@gmail.com>
+			   """
+# Known bugs that can't be fixed here:
+	#~  REPOSITORY_DIR  -> line 45
+	#~  server -> consumir_scholar
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+	#~ 
+REPOSITORY_DIR = "/home/japeto/shared/repository/"
+
 def buscadorSimple(frase):
     # nombre_directorio=str(id_user)+ "."+ str(id_proyecto)
     querier = scholar.ScholarQuerier()
@@ -111,6 +148,7 @@ def indexarArchivos():
 
 def CrearDirectorioProyecto(nombreProyecto, user):
     nombreDirectorio = str(user) + "." + str(nombreProyecto)
+    # print "Mensaje: Creando el Directorio "+nombreDirectorio+"para el proyecto"
     # Creacion de directorios de proyectos.
     #Ruta en el host
     os.mkdir(REPOSITORY_DIR+nombreDirectorio, 0777)

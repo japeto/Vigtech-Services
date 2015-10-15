@@ -26,19 +26,22 @@ class UniqueUserEmailField(forms.EmailField):
 
 
 class FormularioRegistrarUsuario(UserCreationForm):
-    nombres = forms.CharField(label="Nombres")
+    nombres = forms.CharField(label="Nombre Completo")
     apellidos = forms.CharField(label="Apellidos")
-    email = UniqueUserEmailField(label="Email", required=True)
-    #username=form.CharField(widget=forms.widget.TextInput, label="Nombre de usuario")
+    email = UniqueUserEmailField(label="Correo", required=True)
+    usuario = forms.CharField(label="Nombre de usuario")
+    #~ pass1 = forms.CharField(label="Contraseña")
+    #~ pass2 = forms.CharField(label="confirmar Contraseña")
+    #~ username=form.CharField(widget=forms.widget.TextInput, label="Nombre de usuario")
     #pass1=forms.CharField(widget=forms.widget.PasswordInput,label="Contraseña")
     #pass2=forms.CharField(widget=forms.widget.PasswordInput,label="Vuelva a escribir la contraseña")
 
     class Meta:
         model = User
-        fields = ['nombres', 'apellidos', 'username', 'email', 'password1', 'password2']
+        fields = ['nombres', 'apellidos', 'usuario', 'email', 'password1', 'password2']
         #exclude=['username.help_text']
         help_texts = {
-            'username': _('Help text'),
+            'usuario': _('Help text'),
         }
 
     def save(self, commit=True):
