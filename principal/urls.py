@@ -9,6 +9,8 @@ urlpatterns = patterns('',
                        url(r'^gestionproyectos/nuevoProyecto/$', 'principal.views.nuevo_proyecto',
                            name='crear_proyecto'),
 
+                       url(r'logmensajes/$', 'principal.views.logmensajes',name='logmensajes'),
+
                        url(r'^gestionproyectos/MisProyectos/$', 'principal.views.ver_mis_proyectos',
                            name='ver_mis_proyectos'),
                        url(r'^gestionproyectos/editar_proyecto/(\d+)$', 'principal.views.editar_proyecto',
