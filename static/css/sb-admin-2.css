@@ -5,10 +5,7 @@
  */
 
 body {
-/*
     background-color: #f8f8f8;
-*/
-    background-color: #FFF;
 }
 
 #wrapper {
@@ -209,12 +206,12 @@ body {
 }
 
 .chat-panel .panel-body {
-    height: 100px;
+    height: 350px;
     overflow-y: scroll;
 }
 
 .login-panel {
-    margin-top: 10%;
+    margin-top: 25%;
 }
 
 .flot-chart {
@@ -349,17 +346,4 @@ table.dataTable thead .sorting:after {
 
 .panel-yellow a:hover {
     color: #df8a13;
-}
-
-.message-success{
-    font-family: fontawesome;
-    color: #0F0;
-}
-.message-danger{
-    font-family: fontawesome;
-    color: #F00;
-}
-.message-text{
-    font-family: fontawesome;
-    color: #00F;
 }

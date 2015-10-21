@@ -1,21 +1,19 @@
 # -*- encoding: utf-8 -*-
 
-# from django.shortcuts import render, render_to_response, redirect, get_object_or_404, get_list_or_404, Http404
-from django.shortcuts import *
+from django.shortcuts import render, render_to_response, redirect, get_object_or_404, get_list_or_404, Http404
 from django.views.generic import TemplateView, FormView
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.contrib import messages
 from django.template import RequestContext
-from django import template
 from models import proyecto
 from .forms import *
 import funciones
 import sys
-#~ from administradorConsultas import AdministradorConsultas # Esta la comente JAPeTo
-#~ from manejadorArchivos import obtener_autores # Esta la comente JAPeTo
-#~ from red import Red # Esta la comente JAPeTo
+from administradorConsultas import AdministradorConsultas
+from manejadorArchivos import obtener_autores
+from red import Red
 from Logica import ConsumirServicios, procesamientoScopusXml, procesamientoArxiv
 # import igraph
 import traceback
@@ -31,15 +29,10 @@ sys.setdefaultencoding('utf-8')
 #ruta = "/home/administrador/ManejoVigtech/ArchivosProyectos/"
 
 sesion_proyecto=None
-mensajes_pantalla=None
-proyectos_list =None
 
 class home(TemplateView):
     template_name = "home.html"
-    def get_context_data(self, **kwargs):
-        global proyectos_list
-        proyectos_list = get_list_or_404(proyecto,  idUsuario=self.request.user)
-        return {'proyectos': proyectos_list}
+
 
 class RegistrarUsuario(FormView):
     template_name = "registrarUsuario.html"
@@ -50,6 +43,7 @@ class RegistrarUsuario(FormView):
         user = form.save()
         messages.success(self.request, "Se ha creado exitosamente el usuario")
         return redirect('login')
+
 
 @login_required
 def nuevo_proyecto(request):
@@ -64,8 +58,6 @@ def nuevo_proyecto(request):
         limArxiv = request.POST.get('limArxiv')
         limSco = request.POST.get('limSco')
         print limArxiv, limSco
-        global mensajes_pantalla
-        global proyectos_list
         #print fraseB
         #Formato de frase de busqueda
         #FraseBásica,Words,FraseA,autor,before,after
@@ -75,153 +67,112 @@ def nuevo_proyecto(request):
             articulos = {}
             modelo_proyecto = form.save(commit=False)
             modelo_proyecto.idUsuario = request.user
-            # print "2"
-            # proyectos_list = get_list_or_404(proyecto,  idUsuario=request.user)
-            # proyectos_list = get_list_or_404(proyecto, idUsuario=request.user)
             #modelo_proyecto.calificacion=5
             modelo_proyecto.fraseBusqueda = busqueda
             modelo_proyecto.save()
 
             #Creacion del directorio donde se guardaran los documentos respectivos del proyecto creado.
-            mensajes_pantalla="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Se ha creado el Directorio para el proyecto</p>"
+
             funciones.CrearDirectorioProyecto(modelo_proyecto.id_proyecto, request.user)
-            
             if fraseB != "":
+
                 try:
                     """
                         Descarga de documentos de Google Scholar y Scopus
                     """
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Descarga de documentos de Google Scholar y Scopus</p>"
-                    # print mensajes_pantalla
                     articulos_arxiv= ConsumirServicios.consumir_arxiv(fraseB, request.user.username, str(modelo_proyecto.id_proyecto), limArxiv)
                     articulos = ConsumirServicios.consumir_scholar(fraseB, request.user.username, str(modelo_proyecto.id_proyecto) )
                     articulos_scopus = ConsumirServicios.consumir_scopus(fraseB, request.user.username, str(modelo_proyecto.id_proyecto), limSco)
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Descarga de documentos de Google Scholar y Scopus terminada</p>"
-                except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA: </b>Descarga de documentos de Google Scholar y Scopus</p>"
-                    print traceback.format_exc()
-                    
 
-                try:
                     """
                         indexación
                     """
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Inicia la indexación</label></p>"
-                    print mensajes_pantalla
                     ir = ConsumirServicios.IR()
                     ir.indexar(str(request.user.username),str(modelo_proyecto.id_proyecto))
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Indexacion terminada</p>"
-                except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA:</b>La indexación no se puede completar</p>"
-                    print traceback.format_exc()
 
-                try:
+
                     """"
-						Analisis
-                    """
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Inicia el Analisis</p>"
-                    # print mensajes_pantalla
+                    Analisis
+                    """    
                     data = ConsumirServicios.consumir_analisis(str(request.user.username),str(modelo_proyecto.id_proyecto))
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Analisis terminado</p>"
-                except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA:</b> El Analisis no se puede completar</p>"
-                    print traceback.format_exc()
 
 
-                
-                try:
                     """
-                    Analisis de Redes Sociales
+                    Analisis de Redes Sociales    
                     """
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Inicia el Analisis de Redes Sociales</p>"
-                    # print mensajes_pantalla
                     network = ConsumirServicios.consumir_red(str(request.user.username),str(modelo_proyecto.id_proyecto))
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Analisis de Redes Sociales terminado</p>"
-                except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA:</b>El Analisis de Redes Sociales no se puede completar</p>"
-                    print traceback.format_exc()
 
-                try:
                     """
                         Inserción de metadatos Arxiv
                     """
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Inica la inserción de metadatos Arxiv</p>"
-                    # print mensajes_pantalla
                     xml = open("/home/vigtech/shared/repository/"+ str(request.user.username)
                                     + "." + str(modelo_proyecto.id_proyecto) + "/salida.xml")
-                    procesamientoArxiv.insertar_metadatos_bd(str(modelo_proyecto.id_proyecto),xml)
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>La inserción de metadatos Arxiv ha terminado</p>"
-                except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA:</b>La inserción de metadatos Arxiv no se puede completar</p>"
-                    print traceback.format_exc()
-                
-                try:
+
+                    try:
+                        procesamientoArxiv.insertar_metadatos_bd(str(modelo_proyecto.id_proyecto),xml)
+                    except:
+                        print traceback.format_exc()
+
                     """
                        Conexión con base datos para insertar metadatos de paper de Scopus
                     """
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Inica la inserción de metadatos Scopus</p>"
-                    # print mensajes_pantalla
                     busqueda = open("/home/vigtech/shared/repository/"+ str(request.user.username)
                                     + "." + str(modelo_proyecto.id_proyecto) + "/busqueda0.xml")
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>La inserción de metadatos Scopus ha terminado</p>"                    
-                except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA:</b>La inserción de metadatos Scopus no se puede completar</p>"
-                    print traceback.format_exc()
 
-                
-                try:
                     """
                         NAIVE BAYES
                     """
+                    #ConsumirServicios.consumir_recuperacion_unidades_academicas(str(request.user.username),str(modelo_proyecto.id_proyecto))
+				
+                    try:
+                        procesamientoScopusXml.xml_to_bd(busqueda, modelo_proyecto.id_proyecto, articulos_scopus['titulos'])
+                    except:
+                        print traceback.format_exc()
+
                     ConsumirServicios.consumir_recuperacion_unidades_academicas(str(request.user.username),str(modelo_proyecto.id_proyecto))
-                    mensajes_pantalla += "<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Inicia el procesando Scopus XML</ṕ>"
-                    # print mensajes_pantalla
-                    procesamientoScopusXml.xml_to_bd(busqueda, modelo_proyecto.id_proyecto, articulos_scopus['titulos'])
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Inicia el procesando Scopus XML ha terminado</p>"
+                    
+                    
+                    messages.success(request, "Se ha creado exitosamente el proyecto")
                 except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA:</b> El procesando Scopus XML no se puede completar</p>"
-                    print traceback.format_exc()                        
-                
-                try:
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Inicia la recuperacion de unidades academicas</p>"
-                    # print mensajes_pantalla
-                    ConsumirServicios.consumir_recuperacion_unidades_academicas(str(request.user.username),str(modelo_proyecto.id_proyecto))
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Finaliza la recuperacion de unidades academicas</p>"
-                    mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Se ha creado exitosamente el proyecto</p>"
-                except:
-                    mensajes_pantalla+="<p class='text-danger'><span class='fa  fa-times fa-fw'></span><b>PROBLEMA:</b> la recuperacion de unidades academicas no se puede completar</p>"
-                    print traceback.format_exc() 
-                # messages.success(request, "Se ha creado exitosamente el proyecto")
+                    print traceback.format_exc()
+                    messages.error(request, "Hubo un problema en la descarga")
+
+
+
                 #articulos = funciones.buscadorSimple(fraseB)
                 #ac = AdministradorConsultas()
                 #ac.descargar_papers(fraseB)
                 #lista_scopus = ac.titulos_descargas
+
             #if fraseA != "" or autor != "" or words != "":
             #    articulos = funciones.buscadorAvanzado(fraseA, words, autor, after, before)
+
+
             #print articulos
-            print str(modelo_proyecto.id_proyecto)
-            print str(modelo_proyecto.resumen)
+
+
+            #print str(modelo_proyecto.id_proyecto)
+
             #funciones.moveFiles(modelo_proyecto.id_proyecto, request.user, articulos, lista_scopus)
             #funciones.escribir_archivo_documentos(modelo_proyecto.id_proyecto, request.user, articulos, lista_scopus)
-            # messages.success(request, "Se ha creado exitosamente el proyecto")
-            #~ return redirect('crear_proyecto')
+            messages.success(request, "Se ha creado exitosamente el proyecto")
+            return redirect('crear_proyecto')
         else:
             messages.error(request, "Imposible crear el proyecto")
     else:
-		form = FormularioCrearProyecto()
-    return render(request, 'GestionProyecto/NuevoProyecto.html', {'form': form,
-                'proyectos': proyectos_list}, context_instance=RequestContext(request))
+        form = FormularioCrearProyecto()
+    return render(request, 'GestionProyecto/NuevoProyecto.html', {'form': form})
 
 
 #Visualización de proyectos propios de un usuario.
 @login_required
 def ver_mis_proyectos(request):
     try:
-        global proyectos_list
         proyectos_list = get_list_or_404(proyecto, idUsuario=request.user)
     except proyecto.DoesNotExist:
         raise Http404
-    return render(request, 'GestionProyecto/verMisProyectos.html', {'proyectos': proyectos_list}, context_instance=RequestContext(request))
+    return render(request, 'GestionProyecto/verMisProyectos.html', {
+        'proyectos': proyectos_list}, context_instance=RequestContext(request))
 
 
 #Visualización de proyectos con disponibilidad pública que no pertenecen al usuario actual.
@@ -273,8 +224,6 @@ def editar_proyecto(request, id_proyecto):
                   context_instance=RequestContext(request))
 
 
-
-
 @login_required
 def ver_proyecto(request, id_proyecto):
     model_proyecto = get_object_or_404(proyecto, id_proyecto=id_proyecto)
@@ -292,7 +241,7 @@ def ver_proyecto(request, id_proyecto):
 def buscador(request):
     if request.method == 'GET':
         ir = ConsumirServicios.IR()
-
+        
         fraseBusqueda = request.GET.get("busquedaIR")
         # IR.consultar(fraseBusqueda,"","")
         data = ir.consultar(fraseBusqueda,str(request.user.username),request.session['proyecto'])
@@ -313,39 +262,37 @@ def analisisView(request):
     proyecto = str(request.user.username) + "." + str(request.session['proyecto'])
     with open("/home/vigtech/shared/repository/" + proyecto + "/coautoria.json") as json_file:
         data = json.load(json_file)
-
-
+    
+    
 
     #nodos, aristas = r.generar_json()
     nodos1 = json.dumps(data['nodes'])
     aristas1 = json.dumps(data['links'])
-
+    
    # return render(request, "GestionAnalisis/coautoria.html", {"nodos": nodos1, "aristas": aristas1})
     return render(request, "GestionAnalisis/coautoria.html", {"nodos": nodos1, "aristas": aristas1})
     #return render(request, "GestionAnalisis/coautoria2.html", {"proyecto":proyecto})
-@login_required
+@login_required    
 def coautoria_old(request):
     proyecto = str(request.user.username) + "." + str(request.session['proyecto'])
     with open("/home/vigtech/shared/repository/" + proyecto + "/coautoria.json") as json_file:
         data = json.load(json_file)
-
-
+    
+    
 
     #nodos, aristas = r.generar_json()
     nodos1 = json.dumps(data['nodes'])
     aristas1 = json.dumps(data['links'])
-
+    
    # return render(request, "GestionAnalisis/coautoria.html", {"nodos": nodos1, "aristas": aristas1})
     return render(request, "GestionAnalisis/Analisis.html", {"nodos": nodos1, "aristas": aristas1})
-    
 @login_required
 def eliminar_proyecto(request, id_proyecto):
     user = request.user
     project = get_object_or_404(proyecto, id_proyecto=id_proyecto)
     funciones.eliminar_proyecto(id_proyecto, user)
     project.delete()
-    return HttpResponse(json.dumps({"mensaje": "elimniado "+request.method}),content_type="application/json")
-    # return redirect("ver_mis_proyectos")
+    return redirect("ver_mis_proyectos")
 
 @login_required
 def analisis_paises(request):
@@ -433,22 +380,14 @@ def analisis_indicadores(request):
     #print proyecto
     #return render(request, "GestionAnalisis/paisesbar.html",{"labels": labels, "values": values})
     return render(request, "GestionAnalisis/indicadores.html",{"data":data})
-
 @login_required
 def clasificacion_eisc(request):
     proyecto = str(request.user.username) + "." + str(request.session['proyecto'])
     with open("/home/vigtech/shared/repository/" + proyecto + "/eisc.json") as json_file:
         data = json.load(json_file)
-
+    
     eids = data['clasificacion']
     adminBD = AdminBD()
     papers =adminBD.get_papers_eid(eids)
     return render (request, "GestionEISC/clasificacion_eisc.html", {"papers": papers})
 
-
-def logmensajes(request):
-    if request.method == 'GET':
-        return HttpResponse(
-            json.dumps({"mensaje": mensajes_pantalla}),content_type="application/json")
-    else:
-        return HttpResponse(json.dumps({"mensaje": ""}),content_type="application/json")

@@ -14,7 +14,9 @@ class AdminBD:
 
 		#host='127.0.0.1' dbname='docker' user='docker' password='docker' port='49153'"
         try:
-            self.conn = psycopg2.connect(database="docker", user="postgres", password="", host="localhost", port="5432")
+
+
+            self.conn = psycopg2.connect(database="docker", user="docker", password="docker", host="localhost", port="49153")
             # get a connection, if a connect cannot be made an exception will be raised here
             # conn.cursor will return a cursor object, you can use this cursor to perform queries
             self.cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -40,7 +42,6 @@ class AdminBD:
         except psycopg2.DatabaseError, e:
             print 'Error %s' %e
             print "Imposible realizar la cosulta"
-            
     def get_autores(self, proyecto):
 		consulta= "Select au.nombre_autor from paper_proyecto pp JOIN paper_autor pa ON pa.paper_id = pp.id_paper JOIN autor au ON au.id = autor_id WHERE pp.id_proyecto = %s;" %(str(proyecto))
 		try:
