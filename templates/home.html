@@ -3,34 +3,37 @@
 
 {% block contenido %}
 	<div class="row">
-		
         <div class="col-lg-12">
-            <h1 class="page-header">Noticias</h1>
+            <h1 class="page-header">Principal</h1>
         </div>
     	<!-- /.col-lg-12 -->
     	<div class="row">
 	    	<div class ="col-lg-4">
 		    	<div class="panel panel-primary">
 		    		<div class="panel-heading">
-		    			<!--Usuarios-->
+		    			<i class="fa fa-th fa-fw"></i> MIS PROYECTOS
 		    		</div>
 		    		<div class="panel-body">
+						{% for proyecto in proyectos%}
+							<a href="#"><i class="fa  fa-check fa-fw"></i><span id="{{proyecto.nombre}}">{{proyecto.nombre}}</span></a><br/>
+						{% endfor %}
 		    		</div>
 		    	</div>
 	    	</div>
 	    	<div class ="col-lg-4">
-		    	<div class="panel panel-primary">
+		    	<div class="panel panel-green">
 		    		<div class="panel-heading">
-		    			<!--Mejores proyectos -->
+		    			<i class="fa fa-star fa-fw"></i> PROYECTOS DESTACADOS
 		    		</div>
 		    		<div class="panel-body">
+						{{name}}
 		    		</div>
 		    	</div>
 	    	</div>
 	    	<div class ="col-lg-4">
-		    	<div class="panel panel-primary">
+		    	<div class="panel panel-yellow">
 		    		<div class="panel-heading">
-		    			<!--... -->
+		    			<i class="fa fa-search-plus fa-fw"></i> BUSQUEDAS DE ESTA SEMANA
 		    		</div>
 		    		<div class="panel-body">
 		    		</div>
@@ -40,12 +43,7 @@
     </div>
     <div class= "row">
 				<div class="col col-md-8">
-				
-					
 					<!--<img src="#">-->
-					
-						
-					
 				</div>
 		</div>	
     
