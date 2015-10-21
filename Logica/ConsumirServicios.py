@@ -8,6 +8,7 @@ from ConexionBD.adminBD import AdminBD
 import traceback
 
 REPOSITORY_DIR = "/home/vigtech/shared/repository/"
+#REPOSITORY_DIR = "/home/japeto/shared/repository/"
 def consumir_scholar(consulta, user, proyecto):
     consulta = quote(consulta.encode("utf8"))
     user = quote(user.encode("utf8"))
