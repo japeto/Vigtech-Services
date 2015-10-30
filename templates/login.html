@@ -23,51 +23,46 @@
  </head>
 	<body>
     <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0; background:white;">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="{% url 'home' %}" style="margin: 0px; padding: 0px"><img src="{{STATIC_URL}}img/banner2.jpg"/>
+        <div class="navbar-header">
+            <a class="navbar-brand" href="{% url 'home' %}" style="margin: 0px; padding: 0px"><img src="{{STATIC_URL}}img/banner2.jpg"/>
                 <!--<h2 style="margin: 0px; padding: 0px" >Vigtech</h2>--></a>
             </div>
-    </nav>		
-		<!--<div id="page-wraper">-->
-			<div class="container">
-				{% if messages %}
-        		<div class="row">
-        			<div class="col-md-4 col-md-offset-4">
-        				{% for message in messages %}
-					    	<p{% if message.tags == "success" %} class="alert alert-success"{% endif %}>{{ message }}</p>
-					    {% endfor %}
-        			</div>
-        		</div>
-        		{% endif %}
-				<div  class="row">
-					<div class="col-md-4 col-md-offset-4">
-						<div class="login-panel panel panel-default">
-						    <div class="panel-heading">
-						  		<center><img src="{{STATIC_URL}}img/login_img.png" class="profile-image img-circle">
-									<h2>Iniciar session</h2></center>
-						    </div> 
-						    <div class="panel-body">
-								<form method="post" action="{% url 'login' %}" role="form" >
-									<fieldset>
-				      					{% csrf_token %}
-				      					<input type="hidden" name="next" style="width:90%;" value="{{next}}"/>
-				      					{% bootstrap_form form  %}
-				      					
-				      					<div class="login-buttons">
-				        					<button type="submit" class="btn btn-lg btn-info btn-block">
-				          					<i class="fa fa-sign-in">   Acceder</i>
-				        					</button>
-				      					</div>
-				      				</fieldset>
-			    				</form>
-		    				</div>
-		    				<div class="panel-footer">
-		    				<p align="right">¿No dispones de una cuenta Vigtech?<br/>
-		    				<a href="{% url 'registrar_usuario' %}"><strong>Ven regístrate</strong></p></a>
-		    				</div>
-						</div>
-					</div>
-				</div>
-			</div>
-	</body>
+        </nav>		
+        <div class="container">
+            <div  class="row">
+               <div class="col-md-6 col-md-offset-3">
+                  <div class="login-panel panel panel-default">
+                      <form method="post" action="{% url 'login' %}" role="form" >
+                          <div class="panel-body">
+                              <b>Accede a VigTech<hr/></b>
+                              {% if messages %}
+                              {% for message in messages %}
+                              <div {% if message.tags == "success" %} class="alert alert-success"{% endif %}>{{ message }}</div>                            
+                              {% endfor %}
+                              {% endif %}                                  
+                              <fieldset>
+                                {% csrf_token %}
+                                <input type="hidden" name="next" style="width:90%;" value="{{next}}"/>
+                                {% bootstrap_form form  %}
+                            </div>
+                            <div class="panel-footer">
+                                <div class=text-right>
+                                    <a  href="{% url 'registrar_usuario' %}" type="submit" class="btn btn-sm btn-grey">Registra una cuenta</a>
+                                    <button type="submit" class="btn btn-sm btn-primary">Acceder</button>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>             
+    <script type="text/javascript">
+        $("label[for='id_username']").text("Nombre de usuario:");
+        $("label[for='id_password']").text("Contraseña:");
+        $("#id_username").attr("placeholder", "Escriba su nombre de usuario").blur();
+        $("#id_password").attr("placeholder", "Escriba su contraseña").blur();
+    </script>
+</body>
 </html>

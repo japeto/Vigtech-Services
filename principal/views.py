@@ -6,6 +6,7 @@ from django.views.generic import TemplateView, FormView
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.template import RequestContext
 from django import template
@@ -45,8 +46,6 @@ class home(TemplateView):
             proyectos_list = get_list_or_404(proyecto,  idUsuario=self.request.user)
         except:
             proyectos_list = None
-            #print traceback.format_exc()
-            #proyectos_list = None
 	return {'proyectos': proyectos_list, 'mproyecto': model_proyecto}
            
 
@@ -108,8 +107,8 @@ def nuevo_proyecto(request):
                     print "descarga de documentos, by japeto"
                     mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Descarga de documentos de Arxiv</p>"
                     articulos_arxiv= ConsumirServicios.consumir_arxiv(fraseB, request.user.username, str(modelo_proyecto.id_proyecto), limArxiv)
-                    mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Descarga de documentos de Google Scholar</p>"
-                    articulos = ConsumirServicios.consumir_scholar(fraseB, request.user.username, str(modelo_proyecto.id_proyecto) )
+                    # mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Descarga de documentos de Google Scholar</p>"
+                    # articulos = ConsumirServicios.consumir_scholar(fraseB, request.user.username, str(modelo_proyecto.id_proyecto) )
                     mensajes_pantalla+="<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Descarga de documentos de Scopus</p>"
                     articulos_scopus = ConsumirServicios.consumir_scopus(fraseB, request.user.username, str(modelo_proyecto.id_proyecto), limSco)
                     mensajes_pantalla+="<p class='text-success'><span class='fa  fa-check fa-fw'></span>Descarga de documentos terminada</p>"
@@ -246,8 +245,10 @@ def ver_mis_proyectos(request):
     global proyectos_list
     try:
         proyectos_list = get_list_or_404(proyecto, idUsuario=request.user)
-    except proyecto.DoesNotExist:
-        raise Http404
+    except: 
+        proyectos_list =None
+        messages.success(request, "Usted no tiene proyectos")
+
     return render(request, 'GestionProyecto/verMisProyectos.html', {'proyectos': proyectos_list, 'mproyecto': model_proyecto}, context_instance=RequestContext(request))
 
 
@@ -261,8 +262,9 @@ def ver_otros_proyectos(request):
         for project in proyectos_list:
             if project.idUsuario != idUser:
                 otros_proyectos.append(project)
-    except proyecto.DoesNotExist:
-        raise Http404
+    except:
+        proyectos_list =None
+
     return render(request, 'GestionProyecto/OtrosProyectos.html', {
         'proyectos': otros_proyectos, 'proyectos':proyectos_list, 'mproyecto': model_proyecto}, context_instance=RequestContext(request))
 
@@ -348,9 +350,6 @@ def analisisView(request):
     proyecto = str(request.user.username) + "." + str(request.session['proyecto'])
     with open("/home/vigtech/shared/repository/" + proyecto + "/coautoria.json") as json_file:
         data = json.load(json_file)
-
-
-
     #nodos, aristas = r.generar_json()
     nodos1 = json.dumps(data['nodes'])
     aristas1 = json.dumps(data['links'])
@@ -380,17 +379,22 @@ def eliminar_proyecto(request, id_proyecto):
     global model_proyecto
     global proyectos_list
     try:
+        # print "#1"
         proyectos_list = get_list_or_404(proyecto,  idUsuario=self.request.user)
+        # print "#2"
         model_proyecto = get_object_or_404(proyecto, id_proyecto=str(self.request.session['proyecto']))
+        # print "#3"   
     except:
         proyectos_list = None
         model_proyecto = None
+
+
     user = request.user
     project = get_object_or_404(proyecto, id_proyecto=id_proyecto)
     funciones.eliminar_proyecto(id_proyecto, user)
     project.delete()
-    #~ return HttpResponse(json.dumps({"mensajes": "El proyecto "+project.nombre+" se ha eliminado"}),content_type="application/json")
-    return redirect("ver_mis_proyectos")
+    messages.success(request, "El proyecto \""+project.nombre+"\" se elimino.")
+    return HttpResponseRedirect(reverse('ver_mis_proyectos'))
 
 @login_required
 def analisis_paises(request):
@@ -523,7 +527,19 @@ def clasificacion_eisc(request):
 
 def logmensajes(request):
     if request.method == 'GET':
-        return HttpResponse(
-            json.dumps({"mensaje": mensajes_pantalla}),content_type="application/json")
+        return HttpResponse(json.dumps({"mensaje": mensajes_pantalla}),content_type="application/json")
     else:
         return HttpResponse(json.dumps({"mensaje": ""}),content_type="application/json")
+
+
+# def registrarusuario(request):
+#     if request.method == 'GET':
+#         return render(request, "registrarUsuario.html")
+#     elif request.method == 'POST':
+#         data = request.POST.get('nombre')
+#         print data        
+#         # messages.success(request, "Se ha creado exitosamente el usuario")
+#         # return redirect('login')
+#         return render (request, "registrarUsuario.html", {"response": data})        
+#     else:
+#         return render(request, "registrarUsuario.html")

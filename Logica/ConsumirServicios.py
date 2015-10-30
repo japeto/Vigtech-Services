@@ -8,7 +8,7 @@ from ConexionBD.adminBD import AdminBD
 import traceback
 
 REPOSITORY_DIR = "/home/vigtech/shared/repository/"
-#REPOSITORY_DIR = "/home/japeto/shared/repository/"
+# REPOSITORY_DIR = "/home/japeto/shared/repository/"
 def consumir_scholar(consulta, user, proyecto):
     consulta = quote(consulta.encode("utf8"))
     user = quote(user.encode("utf8"))
@@ -31,8 +31,7 @@ def consumir_arxiv(consulta, user, proyecto, limite):
     
     server = "http://localhost:50000/consultaArxiv/?consulta=" + consulta + "&user=" \
              + str(user) + "&proyecto=" + str(proyecto) + "&limite=" +str(limite)
-
-
+    print server
 
     # req = Request(server)
     response = urlopen(server)

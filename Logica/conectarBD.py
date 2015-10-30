@@ -146,12 +146,32 @@ def buscar(datos, tabla_conjunto, campo):
     #        ''
     print query
 
+def obtener_papers(id_proyecto):
+    query = "SELECT eid, nombre_autor FROM paper AS p, paper_autor, autor AS a WHERE a.id = autor_id AND paper_id = p.id"
+    return run_query(query)
 
+def obtener_autores(id_proyecto):
+    '''Obtiene un diccionario que tiene como llave los autores y almacena la lista de los eid en los que ha participado
+    :param id_proyecto:
+    :return:
+    '''
+    autores = {}
+    papers_proyecto = obtener_papers(id_proyecto);
+    for paper in papers_proyecto:
+        autor = paper[1]
+        id = paper[0]
+        if(autores.get(autor) == None):
+            autores[autor] = []
+        if(not (id in autores[autor]) ):
+            autores[autor].append(id)
+    print autores
+    return autores
 #print select()[1]
 #existe('paper','id', '1' )
 
 def main():
-    run_query('SELECT * FROM paper')
-    buscar([['ing','sist','comp'],['eng', 'sys', 'comp']], 'afiliacion', 'nombre')#,[],[],[]])
-
+    #run_query('SELECT * FROM paper')
+    #buscar([['ing','sist','comp'],['eng', 'sys', 'comp']], 'afiliacion', 'nombre')#,[],[],[]])
+    #obtener_papers(68)
+    len(obtener_autores(68))
 #main()

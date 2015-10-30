@@ -1,15 +1,26 @@
 $(document).ready(function() {
 	$(".btndelete").click(function(event){
 	  event.preventDefault();
-	  //~ console.log("este es");
-	  // console.log(this.id);
+	  ~ console.log("este es");
+	  console.log(this.id);
 	});
-	
 	$("#btncreateproject").click(function(){
 		// alert ($('#fraseB').val() != "")
 		if($('#fraseB').val() != ""){
 		 $('#load').show(); //lateral div
 		 $("#msj").append("<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Enviando los datos del formulario<br/>");
+
+		 $("#id_nombre").prop('disabled', true);
+		 $("#id_resumen").prop('disabled', true);
+		 $("#fraseB").prop('disabled', true);
+		 $("#words").prop('disabled', true);
+		 $("#fraseA").prop('disabled', true);
+		 $("#autor").prop('disabled', true);
+		 $("#before").prop('disabled', true);
+		 $("#limArxiv").prop('disabled', true);
+		 $("#limSco").prop('disabled', true);
+		 $("#btncreateproject").prop('disabled', true);
+
 		 $("#id_nombre").focus();
 		 var timer;
 		 $.ajax({
@@ -30,6 +41,16 @@ $(document).ready(function() {
 								if(json['mensaje'].indexOf("EOF") != -1){ //si ya termino el proceso no pido mas
 									$("#msj").append(json['mensaje'].replace("EOF","..."));
 									clearInterval(timer);
+									$("#id_nombre").prop('disabled', false);
+									$("#id_resumen").prop('disabled', false);
+									$("#fraseB").prop('disabled', false);
+									$("#words").prop('disabled', false);
+									$("#fraseA").prop('disabled', false);
+									$("#autor").prop('disabled', false);
+									$("#before").prop('disabled', false);
+									$("#limArxiv").prop('disabled', false);
+									$("#limSco").prop('disabled', false);
+									$("#btncreateproject").prop('disabled', false);									
 								}else{
 									console.log("mess >> "+mess+"!= "+ json['mensaje'])
 									if(mess != json['mensaje']){  //si no ha terminado agrege al visualizador
@@ -55,16 +76,23 @@ $(document).ready(function() {
 				}, 5000);
 			},
 			success : function(json) {
-				// $("#msj").append("<p class='text-success'><span class='fa  fa-check fa-fw'></span>Se creo el proyecto,<b>"+$('#id_nombre').val()+"</p></b>");
-				console.log("success "+json); // another sanity check
+				console.log("success "+json); // another sanity check				
 			},
 			error : function(xhr,errmsg,err) {
 				console.log(errmsg,err); 
 				$("#divproceso").removeClass('panel-success').addClass('panel-danger')
 				$("#msj").append("<span class='fa fa-times fa-fw'></span>"+"Opps! Hubo problemas, lo sentimos"+"<br/>");
 				clearInterval(timer);
-				// $("#sincampos").html("<center>Problema de creacion</center>");				
-				// $("#sincampos").show();				
+				 $("#id_nombre").prop('disabled', false);
+				 $("#id_resumen").prop('disabled', false);
+				 $("#fraseB").prop('disabled', false);
+				 $("#words").prop('disabled', false);
+				 $("#fraseA").prop('disabled', false);
+				 $("#autor").prop('disabled', false);
+				 $("#before").prop('disabled', false);
+				 $("#limArxiv").prop('disabled', false);
+				 $("#limSco").prop('disabled', false);
+				 $("#btncreateproject").prop('disabled', false);		
 			}
 		});
 		}else{

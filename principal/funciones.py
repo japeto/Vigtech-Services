@@ -3,7 +3,8 @@ import os
 import json
 import urllib
 
-REPOSITORY_DIR = '/home/vigtech/shared/repository/'
+# REPOSITORY_DIR = '/home/japeto/shared/repository/'
+REPOSITORY_DIR = "/home/vigtech/shared/repository/"
 def buscadorSimple(frase):
     # nombre_directorio=str(id_user)+ "."+ str(id_proyecto)
     querier = scholar.ScholarQuerier()
