@@ -63,20 +63,20 @@
             </div>
                 <ul class="nav navbar-top-links navbar-right">
                    <li class="dropdown">
-                        {% for proyecto in proyectos%}
+                        
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="fa fa-list-alt fa-fw"></i><span id="textselect">{{mproyecto.nombre}}</span><i class="fa fa-caret-down"></i>
                         </a>
                         <ul id="dprojectlist" class="dropdown-menu dropdown-user" style="float:right;">
-                            
+                            {% for proyecto in proyectos%}
                                 {% if mproyecto.nombre != proyecto.nombre %}
                                 <li><a href="{% url 'editar_proyecto' proyecto.id_proyecto%}"><i class="fa fa-square-o fa-fw"></i>{{proyecto.nombre}}</a></li>
                                 {% elif mproyecto.nombre == proyecto.nombre%}
                                 <li><a href="{% url 'editar_proyecto' proyecto.id_proyecto%}"><i class="fa fa-check-square-o fa-fw"></i>{{proyecto.nombre}}</a></li>
                                 {% endif %}
-                            
+                            {% endfor %}
                         </ul>
-                        {% endfor %}
+                        
                     <!-- /.dropdown-user -->
                     </li> 					
                     <li class="dropdown">
