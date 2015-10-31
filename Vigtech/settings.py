@@ -71,7 +71,6 @@ DATABASES = {
         'PORT': '49153',
     }
 }
-
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,'templates'),
 )

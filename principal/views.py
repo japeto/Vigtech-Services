@@ -527,7 +527,10 @@ def clasificacion_eisc(request):
 
 def logmensajes(request):
     if request.method == 'GET':
-        return HttpResponse(json.dumps({"mensaje": mensajes_pantalla}),content_type="application/json")
+        global mensajes_pantalla
+        response = {"mensaje": mensajes_pantalla}
+        mensajes_pantalla =""
+        return HttpResponse(json.dumps(response),content_type="application/json")
     else:
         return HttpResponse(json.dumps({"mensaje": ""}),content_type="application/json")
 

@@ -8,27 +8,25 @@ $(document).ready(function() {
 		// alert ($('#fraseB').val() != "")
 		if($('#fraseB').val() != ""){
 		 $('#load').show(); //lateral div
-		 $("#msj").append("<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Enviando los datos del formulario<br/>");
-
-		 $("#id_nombre").prop('disabled', true);
-		 $("#id_resumen").prop('disabled', true);
-		 $("#fraseB").prop('disabled', true);
-		 $("#words").prop('disabled', true);
-		 $("#fraseA").prop('disabled', true);
-		 $("#autor").prop('disabled', true);
-		 $("#before").prop('disabled', true);
-		 $("#limArxiv").prop('disabled', true);
-		 $("#limSco").prop('disabled', true);
-		 $("#btncreateproject").prop('disabled', true);
-
-		 $("#id_nombre").focus();
+		 $("#id_nombre").focus();	 
 		 var timer;
 		 $.ajax({
 			url : "/gestionproyectos/nuevoProyecto/", // the endpoint
 			type : "POST", // http method
 			data : $("#formproject").serialize(), 
 			beforeSend: function(){
+				$("#msj").append("<p class='text-primary'><span class='fa  fa-send fa-fw'></span>Enviando los datos del formulario<br/>");
 				var mess=""
+				$("#id_nombre").prop('disabled', true);
+				$("#id_resumen").prop('disabled', true);
+				$("#fraseB").prop('disabled', true);
+				$("#words").prop('disabled', true);
+				$("#fraseA").prop('disabled', true);
+				$("#autor").prop('disabled', true);
+				$("#before").prop('disabled', true);
+				$("#limArxiv").prop('disabled', true);
+				$("#limSco").prop('disabled', true);
+				$("#btncreateproject").prop('disabled', true);					
 				timer= setInterval(function() { //bucle para consultar el estado del proceso
 					console.log("ajax pide ");
 					$.ajax({
@@ -39,7 +37,7 @@ $(document).ready(function() {
 							// $("#loadgif").show();
 							if(json['mensaje'].indexOf("STOP") == -1){  //parada de emergencia
 								if(json['mensaje'].indexOf("EOF") != -1){ //si ya termino el proceso no pido mas
-									$("#msj").append(json['mensaje'].replace("EOF","..."));
+									$("#msj").append(json['mensaje'].replace("EOF"," "));
 									clearInterval(timer);
 									$("#id_nombre").prop('disabled', false);
 									$("#id_resumen").prop('disabled', false);
@@ -52,20 +50,30 @@ $(document).ready(function() {
 									$("#limSco").prop('disabled', false);
 									$("#btncreateproject").prop('disabled', false);									
 								}else{
-									console.log("mess >> "+mess+"!= "+ json['mensaje'])
+									console.log("mess >> "+mess+" != "+ json['mensaje'])
 									if(mess != json['mensaje']){  //si no ha terminado agrege al visualizador
 										console.log("mess >> "+mess)
-										$("#msj").append(json['mensaje'].replace(mess," "));
+										$("#msj").append(json['mensaje']);
 										mess=json['mensaje'];
 									}else{ $("#msj").append("."); }//agrega puntos cada vez que no hay cambios
 								}
 							}else{
-								strproblem= json['mensaje'].replace(mess," ");
+								strproblem= json['mensaje'];
 								$("#msj").append(strproblem.slice(0,strproblem.indexOf("STOP")));
 								$("#divproceso").removeClass('panel-success').addClass('panel-danger')
 								$("#msj").append("<span class='fa fa-times fa-fw'></span>"+"El servidor envio señal de parada"+"<br/>");								
 								console.log(json['mensaje']);
 								clearInterval(timer);
+								$("#id_nombre").prop('disabled', false);
+								$("#id_resumen").prop('disabled', false);
+								$("#fraseB").prop('disabled', false);
+								$("#words").prop('disabled', false);
+								$("#fraseA").prop('disabled', false);
+								$("#autor").prop('disabled', false);
+								$("#before").prop('disabled', false);
+								$("#limArxiv").prop('disabled', false);
+								$("#limSco").prop('disabled', false);
+								$("#btncreateproject").prop('disabled', false);								
 							}
 						},
 						error : function(xhr,errmsg,err) {
@@ -83,16 +91,16 @@ $(document).ready(function() {
 				$("#divproceso").removeClass('panel-success').addClass('panel-danger')
 				$("#msj").append("<span class='fa fa-times fa-fw'></span>"+"Opps! Hubo problemas, lo sentimos"+"<br/>");
 				clearInterval(timer);
-				 $("#id_nombre").prop('disabled', false);
-				 $("#id_resumen").prop('disabled', false);
-				 $("#fraseB").prop('disabled', false);
-				 $("#words").prop('disabled', false);
-				 $("#fraseA").prop('disabled', false);
-				 $("#autor").prop('disabled', false);
-				 $("#before").prop('disabled', false);
-				 $("#limArxiv").prop('disabled', false);
-				 $("#limSco").prop('disabled', false);
-				 $("#btncreateproject").prop('disabled', false);		
+				$("#id_nombre").prop('disabled', false);
+				$("#id_resumen").prop('disabled', false);
+				$("#fraseB").prop('disabled', false);
+				$("#words").prop('disabled', false);
+				$("#fraseA").prop('disabled', false);
+				$("#autor").prop('disabled', false);
+				$("#before").prop('disabled', false);
+				$("#limArxiv").prop('disabled', false);
+				$("#limSco").prop('disabled', false);
+				$("#btncreateproject").prop('disabled', false);		
 			}
 		});
 		}else{
